@@ -14,8 +14,9 @@ resize=4
 L=5
 push_fl=6
 norm=7
+pars=8
 
-ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm"]
+ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars"]
 
 
 def main():
@@ -113,6 +114,10 @@ def vm_to_process_im(b_c:list):
             sp_str -= 1
 
             normal_(outPath,loc,scale,seed_,w,h)
+        elif op== pars:
+            inPath=steck_str[sp_str]
+            sp_str-=1
+            pars_(inPath)
         elif op == r:
             break
         else:
@@ -155,7 +160,7 @@ def resize_(inPath:str,outPath:str,basewidth,filter='.png'):
         img.save(fullOutPath)
         print(fullOutPath)
 
-        
+
 def normal_(outPath:str,loc:float,scale:float,seed_:int,width,height):
     np.random.seed(seed_)
     size:tuple=None
@@ -165,6 +170,28 @@ def normal_(outPath:str,loc:float,scale:float,seed_:int,width,height):
     fullOutPath=os.path.join(outPath,"Gaus_normal_loc_"+str(loc)+"_scale_"+str(scale)+"_seed_"+str(seed_)+".png")
     new_img=Image.fromarray(10*np.uint8(np.random.normal(loc,scale,size=size_)))
     new_img.save(fullOutPath)
+
+def pars_(inPath:str):
+    l:list=None
+    l=os.listdir(inPath)
+    inputPath=''
+    img=None
+    width=0
+    height=0
+    f_size=0
+    f_size_mb=0
+    for imagePath in l:
+        # imagePath содержит имя изображения
+        inputPath = os.path.join(inPath, imagePath)
+        img = Image.open(inputPath)
+        width=img.size[0]
+        height=img.size[1]
+        print("img name:",imagePath)
+        print("img size: width =",width,"height =",height)
+        f_size=os.path.getsize(inputPath)
+        f_size_mb=f_size/(1024*1024)
+        print("img Mb:",round(f_size_mb,3))
+        print()
 
 
 if __name__ == '__main__':
