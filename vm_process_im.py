@@ -15,8 +15,8 @@ L=5
 push_fl=6
 norm=7
 pars=8
-
-ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars"]
+rot=9
+ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars","rot"]
 
 
 def main():
@@ -118,12 +118,32 @@ def vm_to_process_im(b_c:list):
             inPath=steck_str[sp_str]
             sp_str-=1
             pars_(inPath)
+        elif op == rot:
+            angle=steck[sp]
+            sp-=1
+            f_name=steck_str[sp_str]
+            sp_str-=1
+            outPath = steck_str[sp_str]
+            sp_str -= 1
+            inPath = steck_str[sp_str]
+            sp_str -= 1
+
+            rot_(inPath, outPath, f_name, angle)
         elif op == r:
             break
         else:
             print("Unknown byte-code",ops[op])
         ip+=1
         op = b_c[ip]
+
+def rot_(inPath:str, outPath:str, f_name:str, angle:int):
+    img=None
+    inputPath=os.path.join(inPath, f_name)
+    img = Image.open(inputPath)
+    img = img.rotate(angle)
+    fullOutPath = os.path.join(outPath, 'rotate_' + str(angle)+'_' + f_name)
+    img.save(fullOutPath)
+    print(fullOutPath)
 
 
 def l(inPath:str,outPath:str):
@@ -153,10 +173,9 @@ def resize_(inPath:str,outPath:str,basewidth,filter='.png'):
         img = Image.open(inputPath)
         wpercent = (basewidth / float(img.size[0]))
         hsize = int((float(img.size[1]) * float(wpercent)))
-        fullOutPath = os.path.join(outPath, 'invert_' + imagePath)
+        fullOutPath = os.path.join(outPath, 'resize_' + imagePath)
         # изображение, которое нужно сгенерировать
         img = img.resize((basewidth, hsize), Image.ANTIALIAS)
-        # img=img.convert(mode='L')
         img.save(fullOutPath)
         print(fullOutPath)
 
@@ -170,6 +189,7 @@ def normal_(outPath:str,loc:float,scale:float,seed_:int,width,height):
     fullOutPath=os.path.join(outPath,"Gaus_normal_loc_"+str(loc)+"_scale_"+str(scale)+"_seed_"+str(seed_)+".png")
     new_img=Image.fromarray(10*np.uint8(np.random.normal(loc,scale,size=size_)))
     new_img.save(fullOutPath)
+    print(fullOutPath)
 
 def pars_(inPath:str):
     l:list=None
