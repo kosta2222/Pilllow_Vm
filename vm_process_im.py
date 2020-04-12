@@ -2,7 +2,7 @@
 # присутствует в папке один за другим
 # операции, такие как вращение, обрезка,
 # import PIL as pil
-from PIL import Image
+from PIL import Image, ImageFilter
 import os
 import numpy as np
 
@@ -16,7 +16,10 @@ push_fl=6
 norm=7
 pars=8
 rot=9
-ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars","rot"]
+rgb=10
+filt_contour=11
+filt_edge_enhance=12
+ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars","rot","rgb","filt_contour","filt_edge_enhance"]
 
 
 def main():
@@ -28,34 +31,43 @@ def main():
     par_cmd=''
     cmd_in_ops=''
     cn = -1
-    print("Zdravstvuite ya sostavitel bait-coda dla etoi programmi")
-    print("Dostupnie codi")
-    for c in ops:
-        print(c, end=' ')
-    print()
+    exit_flag = False
     while True:
-        i=input(">>>")
-        if i=="r":
-            break
-        # Ищем код в списке In:i:str Out:b_c:list
-        splitted_cmd_src=i.split()
-        for cn1 in range(len(splitted_cmd_src)):
-            splitted_cmd[cn1]=splitted_cmd_src[cn1]
-        main_cmd=splitted_cmd[0]
-        par_cmd=splitted_cmd[1]
-        for c in range(len(ops)):
-            cmd_in_ops=ops[c]
-            if cmd_in_ops==main_cmd:
-                cn+=1
-                b_c[cn]=c
-                if par_cmd!='':
+        print("Zdravstvuite ya sostavitel bait-coda dla etoi programmi,dla polnogo vihoda exit ")
+        print("Dostupnie codi")
+        for c in ops:
+            print(c, end=' ')
+        print()
+        while True:
+            i=input(">>>")
+            if i=="r":
+                break
+            elif i=="exit":
+                exit_flag = True
+                break
+            # Ищем код в списке In:i:str Out:b_c:list
+            splitted_cmd_src=i.split()
+            for cn1 in range(len(splitted_cmd_src)):
+                splitted_cmd[cn1]=splitted_cmd_src[cn1]
+            main_cmd=splitted_cmd[0]
+            par_cmd=splitted_cmd[1]
+            for c in range(len(ops)):
+                cmd_in_ops=ops[c]
+                if cmd_in_ops==main_cmd:
                     cn+=1
-                    b_c[cn]=par_cmd
-            # Очищаем
-            splitted_cmd[0]=''
-            splitted_cmd[1]=''
-        cn+1
-    vm_to_process_im(b_c)
+                    b_c[cn]=c
+                    if par_cmd!='':
+                        cn+=1
+                        b_c[cn]=par_cmd
+                # Очищаем
+                splitted_cmd[0]=''
+                splitted_cmd[1]=''
+            cn+1
+        if exit_flag == True:
+            print("by-by!)")
+            break
+        vm_to_process_im(b_c)
+
 
 
 def vm_to_process_im(b_c:list):
@@ -129,12 +141,69 @@ def vm_to_process_im(b_c:list):
             sp_str -= 1
 
             rot_(inPath, outPath, f_name, angle)
+        elif op == rgb:
+            outPath = steck_str[sp_str]
+            sp_str -= 1
+            inPath = steck_str[sp_str]
+            sp_str -= 1
+            rgb_(inPath, outPath)
+        elif op == filt_contour:
+            outPath = steck_str[sp_str]
+            sp_str -= 1
+            inPath = steck_str[sp_str]
+            sp_str -= 1
+
+            filt_contour_(inPath,outPath)
+        elif op == filt_edge_enhance:
+            outPath = steck_str[sp_str]
+            sp_str -= 1
+            inPath = steck_str[sp_str]
+            sp_str -= 1
+
+            filt_edge_enhance_(inPath,outPath)
         elif op == r:
             break
         else:
             print("Unknown byte-code",ops[op])
         ip+=1
         op = b_c[ip]
+
+
+def filt_edge_enhance_(inPath, outPath):
+    l:list=None
+    l=os.listdir(inPath)
+    for imagePath in l:
+        # imagePath содержит имя изображения
+        inputPath = os.path.join(inPath, imagePath)
+        img = Image.open(inputPath)
+        fullOutPath = os.path.join(outPath, 'filt_edge_enhance_' + imagePath)
+        img=img.filter(ImageFilter.EDGE_ENHANCE)
+        img.save(fullOutPath)
+        print(fullOutPath)
+
+def filt_contour_(inPath,outPath):
+    l:list=None
+    l=os.listdir(inPath)
+    for imagePath in l:
+        # imagePath содержит имя изображения
+        inputPath = os.path.join(inPath, imagePath)
+        img = Image.open(inputPath)
+        fullOutPath = os.path.join(outPath, 'filt_contour_' + imagePath)
+        img=img.filter(ImageFilter.CONTOUR)
+        img.save(fullOutPath)
+        print(fullOutPath)
+
+def rgb_(inPath:str, outPath:str):
+    l:list=None
+    l=os.listdir(inPath)
+    for imagePath in l:
+        # imagePath содержит имя изображения
+        inputPath = os.path.join(inPath, imagePath)
+        img = Image.open(inputPath)
+        fullOutPath = os.path.join(outPath, 'rgb_' + imagePath)
+        img=img.convert(mode='L')
+        img.save(fullOutPath)
+        print(fullOutPath)
 
 def rot_(inPath:str, outPath:str, f_name:str, angle:int):
     img=None
@@ -154,7 +223,7 @@ def l(inPath:str,outPath:str):
         inputPath = os.path.join(inPath, imagePath)
         img = Image.open(inputPath)
         fullOutPath = os.path.join(outPath, 'L_' + imagePath)
-        img=img.convert(mode='L')
+        img=img.convert(mode='RGB')
         img.save(fullOutPath)
         print(fullOutPath)
 
