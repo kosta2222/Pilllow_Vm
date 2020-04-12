@@ -5,6 +5,7 @@
 from PIL import Image, ImageFilter
 import os
 import numpy as np
+from vm_print import b_c, console, vm_proc_print
 
 make_filter=1
 r=0
@@ -19,9 +20,10 @@ rot=9
 rgb=10
 filt_contour=11
 filt_edge_enhance=12
-ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars","rot","rgb","filt_contour","filt_edge_enhance"]
+readme=13
+ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars","rot","rgb","filt_contour","filt_edge_enhance","readme"]
 
-
+# console() # отладка
 def main():
     b_c=[0]*40
     i=""
@@ -161,12 +163,58 @@ def vm_to_process_im(b_c:list):
             sp_str -= 1
 
             filt_edge_enhance_(inPath,outPath)
+        elif op == readme:
+            inPath = steck_str[sp_str]
+            sp_str -= 1
+            readme_(inPath)
+
+
         elif op == r:
             break
         else:
             print("Unknown byte-code",ops[op])
         ip+=1
         op = b_c[ip]
+
+def readme_(inPath):
+    f_n1="Readme.md"
+    f_n2="desc.txt"
+    f_n3="ver"
+    f_n4=".gitignore"
+    for_cpu_inf=os.environ.get('PROCESSOR_ARCHITECTURE')+' '+ os.environ.get('PROCESSOR_ARCHITEW6432')
+    with open(os.path.join(inPath,f_n1),"w",encoding='utf-8') as f1:
+        read_info="""
+<Имя программы>\n
+=================
+Описание:\n
+Тестировалась на:\n
+Предустановленные пакеты:\n
+ОС:
+CPU: {}
+RAM:
+Дата:
+Автор: Мухамеджанов Константин К.
+Лицензия: As is\n
+""".format(for_cpu_inf)
+        f1.write(read_info)
+
+    with open(os.path.join(inPath,f_n2),"w",encoding='utf-8') as f2:
+        f2.write("Более подробное описание:")
+    with open(os.path.join(inPath, f_n3), "w") as f3:
+        f3.write("1.0")
+    with open(os.path.join(inPath, f_n4), "w") as f4:
+        f4.write("""
+*.back\n
+*.bac\n
+*.bak\n
+.idea/\n
+.venv/\n
+__pycache__/\n
+Makefile\n
+build/\n
+dist/\n
+nbproject/\n""")
+        
 
 
 def filt_edge_enhance_(inPath, outPath):
