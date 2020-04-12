@@ -189,11 +189,11 @@ def readme_(inPath):
 Описание:\n
 Тестировалась на:\n
 Предустановленные пакеты:\n
-ОС:
-CPU: {}
-RAM:
-Дата:
-Автор: Мухамеджанов Константин К.
+ОС:\n
+CPU: {0}\n
+RAM:\n
+Дата:\n
+Автор: Мухамеджанов Константин К.\n
 Лицензия: As is\n
 """.format(for_cpu_inf)
         f1.write(read_info)
@@ -204,16 +204,16 @@ RAM:
         f3.write("1.0")
     with open(os.path.join(inPath, f_n4), "w") as f4:
         f4.write("""
-*.back\n
-*.bac\n
-*.bak\n
-.idea/\n
-.venv/\n
-__pycache__/\n
-Makefile\n
-build/\n
-dist/\n
-nbproject/\n""")
+*.back
+*.bac
+*.bak
+.idea/
+venv/
+__pycache__/
+Makefile
+build/
+dist/
+nbproject/""")
         
 
 
