@@ -201,7 +201,7 @@ def rgb_(inPath:str, outPath:str):
         inputPath = os.path.join(inPath, imagePath)
         img = Image.open(inputPath)
         fullOutPath = os.path.join(outPath, 'rgb_' + imagePath)
-        img=img.convert(mode='L')
+        img=img.convert(mode='RGB')
         img.save(fullOutPath)
         print(fullOutPath)
 
@@ -223,7 +223,7 @@ def l(inPath:str,outPath:str):
         inputPath = os.path.join(inPath, imagePath)
         img = Image.open(inputPath)
         fullOutPath = os.path.join(outPath, 'L_' + imagePath)
-        img=img.convert(mode='RGB')
+        img=img.convert(mode='L')
         img.save(fullOutPath)
         print(fullOutPath)
 
