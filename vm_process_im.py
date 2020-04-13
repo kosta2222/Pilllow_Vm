@@ -23,7 +23,7 @@ filt_edge_enhance=12
 readme=13
 ops=["r","make_filter","push_i","push_str","resize","L","push_fl","norm","pars","rot","rgb","filt_contour","filt_edge_enhance","readme"]
 
-# console() # отладка
+console() # отладка
 def main():
     b_c=[0]*40
     i=""
@@ -177,10 +177,14 @@ def vm_to_process_im(b_c:list):
         op = b_c[ip]
 
 def readme_(inPath):
+    from pathlib import Path
     f_n1="Readme.md"
     f_n2="desc.txt"
     f_n3="ver"
     f_n4=".gitignore"
+    f_proj_fold=os.path.basename(inPath)
+    msy64_etc_f_send=None
+    f_n5="{0}_send.bash".format(f_proj_fold)
     for_cpu_inf=os.environ.get('PROCESSOR_ARCHITECTURE')+' '+ os.environ.get('PROCESSOR_ARCHITEW6432')
     with open(os.path.join(inPath,f_n1),"w",encoding='utf-8') as f1:
         read_info="""
@@ -203,8 +207,8 @@ RAM:\n
     with open(os.path.join(inPath, f_n3), "w") as f3:
         f3.write("1.0")
     with open(os.path.join(inPath, f_n4), "w") as f4:
-        f4.write("""
-*.back
+        f4.write(
+""""*.back
 *.bac
 *.bak
 .idea/
@@ -214,7 +218,21 @@ Makefile
 build/
 dist/
 nbproject/""")
-        
+    # msy64_etc_f_send = f_n5
+
+    # куда писать bash чтобы отправлять по ssh
+    with open(os.path.join(inPath, f_n5), "w") as f5:
+        f5.write(
+"""cd ../home/msys_u/code/c/{0}
+pwd
+comm=$1
+git add --all
+git commit -m $comm
+git push origin2 HEAD
+""".format(f_proj_fold))
+    vm_proc_print(b_c,locals(),globals())
+
+
 
 
 def filt_edge_enhance_(inPath, outPath):
