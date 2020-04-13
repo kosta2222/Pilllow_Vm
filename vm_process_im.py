@@ -208,7 +208,8 @@ RAM:\n
         f3.write("1.0")
     with open(os.path.join(inPath, f_n4), "w") as f4:
         f4.write(
-""""*.back
+""""
+*.back
 *.bac
 *.bak
 .idea/
@@ -228,7 +229,7 @@ pwd
 comm=$1
 git add --all
 git commit -m $comm
-git push origin2 HEAD
+git push origin HEAD
 """.format(f_proj_fold))
     vm_proc_print(b_c,locals(),globals())
 
