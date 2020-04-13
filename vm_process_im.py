@@ -212,6 +212,7 @@ RAM:\n
 *.back
 *.bac
 *.bak
+*.bash
 .idea/
 venv/
 __pycache__/
